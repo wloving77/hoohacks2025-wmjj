@@ -41,6 +41,10 @@ Repository for our HooHacks Project, Spring 2025
 └── sources.txt
 </pre>
 
+# Database Design:
+
+
+
 # Task Breakup: 
 
 - William : DevOps, Frontend, Infra-Setup
