@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+
+  frontend:
+    build:
+      context: ./01-frontend
+      dockerfile: Dockerfile.apache
+    container_name: apache-frontend
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./02-backend
+      dockerfile: Dockerfile.flask
+    container_name: flask-backend
+    ports:
+      - "5001:5001"
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  db:
+    build:
+      context: ./03-db
+      dockerfile: Dockerfile.mongo
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-network
+    command: ["mongod"]
+
+volumes:
+  mongo_data:
+
+networks:
+  app-network:
+    driver: bridge

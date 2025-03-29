@@ -1,0 +1,9 @@
+FROM httpd:2.4
+
+# Copy site files
+COPY public/ /usr/local/apache2/htdocs/
+
+# Copy custom Apache config
+COPY apache/custom-conf.conf /usr/local/apache2/conf/conf.d/
+
+EXPOSE 80
