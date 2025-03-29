@@ -4,7 +4,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./01-frontend
+      dockerfile: Dockerfile.apache
     container_name: apache-frontend
     ports:
       - "8080:80"
@@ -13,7 +14,8 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./02-backend
+      dockerfile: Dockerfile.flask
     container_name: flask-backend
     ports:
       - "5001:5001"
@@ -24,7 +26,8 @@ services:
 
   db:
     build:
-      context: ./db
+      context: ./03-db
+      dockerfile: Dockerfile.mongo
     container_name: mongo-db
     ports:
       - "27017:27017"
