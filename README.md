@@ -10,4 +10,4 @@ Repository for our HooHacks Project, Spring 2025
 - William Loving (wfl9zy)
 - Mitch Mitchell (jbm8efn)
 - James Sweat (jes9hd)
-- Jackson Miskill (jcm4bs)
+- Jackson Miskill (jcm4bsq)
