@@ -37,7 +37,7 @@ if __name__ == "__main__":
         
         # Call geminiAPI.py as a subprocess with the updated environment
         result = subprocess.run(
-            ["python3", "geminiAPI.py"],
+            ["python3", "project/02-backend/api/geminiAPI.py"],
             input=article_text,
             text=True,
             capture_output=True,

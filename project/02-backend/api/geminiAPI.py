@@ -1,14 +1,10 @@
 import sys
 from google import genai
-import warnings
-from urllib3.exceptions import NotOpenSSLWarning
 
-# Suppress the NotOpenSSLWarning
-warnings.filterwarnings("ignore", category=NotOpenSSLWarning)
 
 def generate_synopsis(text):
     # Replace with your actual API key
-    client = genai.Client(api_key="")
+    client = genai.Client(api_key="AIzaSyCCtX80L6uJofel7qiK9rSJk4CxWrc2wbs")
     response = client.models.generate_content(
         model="gemini-2.0-flash",
         contents="Give a synopsis of: " + text
