@@ -4,12 +4,17 @@ Table users {
     issues list
 }
 
+Table issues {
+    issue_id integer [primary key]
+    issue varchar
+}
+
 Table executive {
     article_id integer [primary key]
     article varchar
     date datetime
     summary varchar
-    issue varchar
+    issue_id integer
     priority integer
     fed_state_loc varchar
 }
@@ -19,7 +24,7 @@ Table legislative {
     article varchar
     date datetime
     summary varchar
-    issue varchar
+    issue_id integer
     priority integer
     fed_state_loc varchar
 }
@@ -29,7 +34,7 @@ Table judicial {
     article varchar
     date datetime
     summary varchar
-    issue varchar
+    issue_id integer    
     priority integer
     fed_state_loc varchar
 }
