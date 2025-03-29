@@ -15,6 +15,8 @@ Repository for our HooHacks Project, Spring 2025
 
 # Directory Structure:
 
+
+<pre>
 ├── LICENSE
 ├── README.md
 ├── project
@@ -37,6 +39,7 @@ Repository for our HooHacks Project, Spring 2025
 │   │   └── db-init
 │   └── docker-compose.yml
 └── sources.txt
+</pre>
 
 # Task Breakup: 
 
