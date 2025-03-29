@@ -43,7 +43,7 @@ Repository for our HooHacks Project, Spring 2025
 
 # Database Design:
 
-
+[DB Image](./Database.png)
 
 # Task Breakup: 
 
