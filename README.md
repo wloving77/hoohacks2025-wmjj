@@ -1,2 +1,13 @@
 # hoohacks2025-wmjj
-Repository for our hoohacks project, Spring 2025
+
+# HooHacks!
+
+Repository for our HooHacks Project, Spring 2025
+
+
+# Team Members:
+
+- William Loving (wfl9zy)
+- Mitch Mitchell (jbm8efn)
+- James Sweat (jes9hd)
+- Jackson Miskill (jcm4bs)
