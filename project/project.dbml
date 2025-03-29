@@ -1,0 +1,35 @@
+Table users {
+    userid integer [primary key]
+    username varchar
+    issues list
+}
+
+Table executive {
+    article_id integer [primary key]
+    article varchar
+    date datetime
+    summary varchar
+    issue varchar
+    priority integer
+    fed_state_loc varchar
+}
+
+Table legislative {
+    article_id integer [primary key]
+    article varchar
+    date datetime
+    summary varchar
+    issue varchar
+    priority integer
+    fed_state_loc varchar
+}
+
+Table judicial {
+    article_id integer [primary key]
+    article varchar
+    date datetime
+    summary varchar
+    issue varchar
+    priority integer
+    fed_state_loc varchar
+}
