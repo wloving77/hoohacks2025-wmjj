@@ -1,3 +1,8 @@
 flask
+<<<<<<< HEAD
 pymongo
 python-dotenv
+=======
+google-cloud-aiplatform
+google-genai
+>>>>>>> 1730064c0c935c4804dd87b07ef9c5ee6a0fee8e
