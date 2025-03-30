@@ -1,115 +1,114 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-white">
-<head>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      plugins: [tailwind.typography],
-    };
-  </script>
-
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Issue Detail | WhatTheGovDoin?</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="flex flex-col min-h-screen font-sans text-gray-800">
-
-  <!-- Enhanced Loading Screen with Spinner -->
-  <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
-
-    <!-- Text -->
-    <div class="text-center">
-      <h2 class="text-2xl font-semibold text-[#002958]">Fetching LLM Summary...</h2>
-      <p class="text-gray-600 mt-2">This may take up to 30 seconds.</p>
-    </div>
-
-    <br>
-    
-    <!-- Spinner -->
-    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mb-4"></div>
-  </div>
-
-
-  <!-- Page Content -->
-  <div id="page-content" class="hidden">
-
+<html lang="en" class="bg-[#001940]">
+  <head>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>    
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.3/dist/purify.min.js"></script>
-    
     <script src="../js/api.js"></script>
-    
-
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Issue Detail | WhatTheGovDoin?</title>
+    <!-- Removed duplicate Tailwind script -->
+  </head>
+  <body class="flex flex-col min-h-screen font-sans text-gray-800">
+  
     <!-- Header -->
-    <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
+    <header class="bg-[#001940] flex justify-between items-center px-2 py-2 border-b border-white">
       <img src="../images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
       <div class="flex flex-col items-start flex-1 min-w-0">
-        <h1 class="w-full text-white text-[2.5rem] text-semibold font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
-        <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-16 md:pr-24 lg:pr-40">... and how it affects you</p>
+        <h1 class="w-full text-white text-[2.5rem] font-semibold font-serif text-center sm:pr-12 md:pr-20 lg:pr-36" style="font-variant: small-caps;">
+          What the US Government is Doing
+        </h1>
+        <p class="w-full text-[#d13f2e] text-xl italic font-semibold font-serif text-right sm:pr-16 md:pr-24 lg:pr-40">
+          ... and how it affects you
+        </p>
       </div>
     </header>
-
+    
     <!-- Main -->
-    <main class="flex-1 px-4 py-3 bg-white w-full flex flex-col gap-6">
-
-      <!-- Summary Section -->
-      <section>
-        <h2 class="text-3xl font-semibold mb-2">LLM Summary</h2>
-        <div id="llm-summary" class="prose prose-lg mx-auto px-4 text-gray-800"></div>
-      </section>
-
-      <!-- News Stories -->
-      <section>
-        <h2 class="text-3xl font-semibold mb-2">News Stories</h2>
-        <ul id="article-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2">
-          <!-- JS will populate -->
-        </ul>
-      </section>
-
-      <!-- Executive Orders -->
-      <section>
-        <h2 class="text-3xl font-semibold mb-2">Executive Orders</h2>
-        <ul id="executive-orders-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2">
-          <!-- JS will populate -->
-        </ul>
-      </section>
+    <main class="flex-1 px-4 py-2 bg-white w-full flex flex-col gap-4">
+      
+      <!-- Enhanced Loading Screen with Spinner -->
+      <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold text-[#002958]">Fetching LLM Summary...</h2>
+          <p class="text-gray-600 mt-2">This may take up to 30 seconds.</p>
+        </div>
+        <br>
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mb-4"></div>
+      </div>
+      
+      <!-- Page Content -->
+      <div id="page-content" class="hidden space-y-4">
+        <!-- LLM Summary Section -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#001f3f] px-4 py-2 rounded-t flex justify-between items-center">
+            <h2 class="text-3xl font-semibold text-white">LLM Summary</h2>
+            <button onclick="history.back()" class="bg-white text-[#001f3f] px-4 py-2 rounded">
+              Back
+            </button>
+          </div>
+          <div class="p-4">
+            <div id="llm-summary" class="prose prose-lg mx-auto text-gray-800"></div>
+          </div>
+        </section>
+  
+        <!-- News Stories Section -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#001f3f] px-4 py-2 rounded-t">
+            <h2 class="text-3xl font-semibold text-white">News Stories</h2>
+          </div>
+          <div class="p-4">
+            <ul id="article-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2">
+              <!-- JS will populate -->
+            </ul>
+          </div>
+        </section>
+  
+        <!-- Executive Orders Section -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#001f3f] px-4 py-2 rounded-t">
+            <h2 class="text-3xl font-semibold text-white">Executive Orders</h2>
+          </div>
+          <div class="p-4">
+            <ul id="executive-orders-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2">
+              <!-- JS will populate -->
+            </ul>
+          </div>
+        </section>
+      </div>
     </main>
-
-  </div> <!-- End of #page-content -->
+    
     <script type="module">
-
       // Run the summary process on load
       window.addEventListener("DOMContentLoaded", async () => {
         const promptText = sessionStorage.getItem("user_prompt");
-
+  
         try {
           const data = await fetchSummary(promptText);
           const cleanHTML = DOMPurify.sanitize(data.llm_response);
           document.getElementById("llm-summary").innerHTML = cleanHTML;
-          
-          // Articles
+  
+          // Populate articles
           const articleList = document.getElementById("article-list");
-
-          data.articles.forEach((article, index) => {
+          data.articles.forEach((article) => {
             const li = document.createElement("li");
             li.innerHTML = `<strong>${article.name || "Untitled Article"}</strong>: ${article.llm_synopses}`;
             articleList.appendChild(li);
           });
-
-          // Executive Orders
+  
+          // Populate executive orders
           const eoList = document.getElementById("executive-orders-list");
-
-          data.executive_orders.forEach((order, index) => {
+          data.executive_orders.forEach((order) => {
             const li = document.createElement("li");
             li.innerHTML = `<strong>${order.name || "Untitled Order"}</strong>: ${order.llm_synopses}`;
             eoList.appendChild(li);
           });
-
-
+  
           // Reveal page, hide loader
           document.getElementById("loading-screen").style.display = "none";
           document.getElementById("page-content").classList.remove("hidden");
-
+  
         } catch (err) {
           console.error("Failed to summarize political context:", err);
           document.getElementById("llm-summary").textContent = "An error occurred while loading the summary.";
@@ -118,6 +117,5 @@
         }
       });
     </script>
-  
-</body>
+  </body>
 </html>

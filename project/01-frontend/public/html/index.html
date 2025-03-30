@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="bg-white">
 <head>
+  <script src="../js/api.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WhatTheGOV Doin?</title>
@@ -8,14 +9,12 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans text-gray-800">
 
-  <script src="../js/api.js"></script>
-
   <!-- Header -->
   <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
     <img src="../images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
     <div class="flex flex-col items-start flex-1 min-w-0">
-      <h1 class="w-full text-white text-[2.5rem] text-semibold font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
-      <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-16 md:pr-24 lg:pr-40">... and how it affects you</p>
+      <h1 class="w-full text-white text-4xl font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
+      <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-12 md:pr-20 lg:pr-36">... and how it affects you</p>
     </div>
   </header>
 
@@ -38,8 +37,8 @@
       <script> 
         document.getElementById("bio-submit").addEventListener("click", () => {
           const inputText = document.getElementById("bio-input").value;
-          if (inputText == "") {
-            return;
+          if (inputText == ""){
+            return; 
           }
           sessionStorage.setItem("user_prompt", inputText);
           window.location.href = "/html/issue.html";
