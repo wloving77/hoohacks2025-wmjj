@@ -14,8 +14,13 @@ load_dotenv(".env")
 
 app = Flask(__name__)
 allowed_origin = os.getenv("FRONTEND_ORIGIN")
-CORS(app, origins=[allowed_origin])
-
+CORS(
+    app,
+    origins=[os.getenv("FRONTEND_ORIGIN")],
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "OPTIONS"],
+)
 
 # ===============================
 # Embedding Helpers
