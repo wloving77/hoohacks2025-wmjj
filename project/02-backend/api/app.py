@@ -315,7 +315,7 @@ def gemini_summarize():
         articles = similarity_search_articles(prompt, top_k=5)
         executive_orders = similarity_search_executive(prompt, top_k=5)
 
-        # Step 2: Bundle summaries together
+        # Step 2: Build joined text for context
         article_summaries = "\n\n".join(
             [f"{a['name']}:\n{a['summary']}" for a in articles]
         )
@@ -323,7 +323,7 @@ def gemini_summarize():
             [f"{eo['name']}:\n{eo['summary']}" for eo in executive_orders]
         )
 
-        # Step 3: Combine into one LLM prompt
+        # Step 3: Combine into one prompt
         final_prompt = (
             f"{pre_prompt}"
             f"\n\nUser Prompt:\n{prompt}"
@@ -335,7 +335,14 @@ def gemini_summarize():
         # Step 4: Single LLM Call
         response_text = llm_model.generate_content(final_prompt).text
 
-        # Step 5: Send back same structure
+        # Step 5: Populate `llm_synopses` = `summary`
+        for a in articles:
+            a["llm_synopses"] = a.get("summary", "No summary provided.")
+
+        for eo in executive_orders:
+            eo["llm_synopses"] = eo.get("summary", "No summary provided.")
+
+        # Step 6: Return response
         return jsonify(
             {
                 "llm_response": response_text,
