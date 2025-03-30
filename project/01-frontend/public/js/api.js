@@ -6,6 +6,8 @@ const Endpoints = [
     `${BASE_API_URL}/api/articles`,
     `${BASE_API_URL}/api/executive`,
     `${BASE_API_URL}/api/issues`,
+    `${BASE_API_URL}/api/biography`,
+    `${BASE_API_URL}/api/summarize`,
 ];
 
 async function defaultFetch(endpoint) {
@@ -50,6 +52,34 @@ async function fetchResults(endpoint, queryText, topK) {
     }
 }
 
+async function summarizePoliticalContext(endpoint,promptText) {
+    try {
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                prompt: promptText
+            })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(`API Error: ${error.error || response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("LLM Response:", data.response);
+        return data.response;
+
+    } catch (error) {
+        console.error("Failed to summarize political context:", error);
+        return null;
+    }
+}
+
+
 async function fetchArticles(queryText, topK) {
     return await fetchResults(Endpoints[0], queryText, topK);
 }
@@ -60,4 +90,12 @@ async function fetchExecutive(queryText, topK) {
 
 async function fetchIssues() {
     return await defaultFetch(Endpoints[2]);
+}
+
+async function fetchBiography(queryText, topK) {
+    return await fetchResults(Endpoints[3], queryText, topK);
+}
+
+async function fetchSummary(promptText) {
+    return await summarizePoliticalContext(Endpoints[4], promptText);
 }

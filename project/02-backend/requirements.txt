@@ -7,3 +7,4 @@ google-genai
 sentence_transformers
 python-dotenv
 numpy
+google-generativeai
