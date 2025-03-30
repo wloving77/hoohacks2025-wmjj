@@ -7,12 +7,12 @@ WORKDIR /app
 # Copy entire project into the container
 COPY ./api .
 
-COPY .env /app/.env
+COPY ./.env .env
 
 COPY ./requirements.txt requirements.txt
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && sleep 5
 
 # Expose Flask port
 EXPOSE 5001

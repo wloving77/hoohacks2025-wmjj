@@ -8,48 +8,14 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans text-gray-800">
 
+  <script src="js/main.js"></script>
+
   <!-- Header -->
   <header class="bg-[#2C3E91] text-white flex justify-between items-center px-6 py-4">
     <div class="flex items-center gap-4">
       <img src="./images/favicon.png" alt="WhatTheGov Logo" class="h-10 w-10" />
       <h1 class="text-xl font-bold">WhatTheGOV Doin?</h1>
     </div>
-    <button id="login-button" onclick="window.location.href='/secure/login'" class="border border-white px-4 py-2 rounded hover:bg-white hover:text-[#2C3E91] transition">
-      Login/Signup
-    </button>
-    <script>
-      function getCookieValue(name) {
-        const cookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith(name + '='));
-        return cookie ? decodeURIComponent(cookie.split('=')[1]) : null;
-      }
-      
-      function isUserAuthenticated() {
-        const email = getCookieValue('user_email');
-        return email !== null &&
-               email !== '' &&
-               email.toLowerCase() !== 'null' &&
-               email.toLowerCase() !== '(null)';
-      }
-    
-      window.addEventListener("DOMContentLoaded", () => {
-        const loginButton = document.getElementById("login-button");
-    
-        if (isUserAuthenticated()) {
-          const userEmail = getCookieValue('user_email');
-          console.log("User is authenticated:", userEmail);
-    
-          if (loginButton) {
-            loginButton.style.display = "none";
-          }
-    
-        } else {
-          console.log("User is not authenticated.");
-        }
-      });
-    </script>
-    
   </header>
 
   <!-- Main Content -->

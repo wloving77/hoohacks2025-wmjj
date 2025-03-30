@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
 import csv
 
-load_dotenv("../.env")
+load_dotenv(".env")
 
 app = Flask(__name__)
 
