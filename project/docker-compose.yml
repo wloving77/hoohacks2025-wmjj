@@ -38,9 +38,11 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+      - ./03-db/mongo-init:/docker-entrypoint-initdb.d:ro
+    env_file:
+      - ./03-db/.env
     networks:
       - app-network
-    command: ["mongod"]
 
 volumes:
   mongo_data:

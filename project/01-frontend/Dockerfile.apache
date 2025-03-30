@@ -24,4 +24,4 @@ COPY .env /run/secrets/env
 EXPOSE 80
 
 # Start Apache in the foreground
-CMD ["/bin/sh", "-c", "set -a && . /run/secrets/env && exec httpd-foreground"]
+CMD ["/bin/sh", "-c", "set -a && . /run/secrets/env && exec apache2ctl -D FOREGROUND"]
