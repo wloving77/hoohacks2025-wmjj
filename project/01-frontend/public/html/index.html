@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatTheGOV Doin?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen font-sans text-gray-800">
+  <!-- Header -->
+  <header class="bg-[#2C3E91] text-white flex justify-between items-center px-6 py-4">
+    <div class="flex items-center gap-4">
+      <img src="./images/favicon.png" alt="Logo" class="h-10 w-10" />
+      <h1 class="text-xl font-bold">WhatTheGOV Doin?</h1>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1 px-6 py-10 bg-white max-w-5xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Biography Input -->
+      <section class="bg-gray-100 rounded shadow p-6">
+        <h2 class="text-lg font-semibold text-center mb-2">Biography</h2>
+        <p class="text-sm text-gray-600 text-center mb-4">Enter a short description of yourself and your interests. We'll use it to find political issues most relevant to you.</p>
+        <textarea class="w-full h-32 p-3 border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="e.g., I'm a college student interested in climate change, student loans, and free speech..."></textarea>
+        <button class="mt-4 w-full bg-[#2C3E91] text-white py-2 rounded hover:bg-blue-800">Find Relevant Issues</button>
+      </section>
+
+      <!-- Issues Section -->
+      <section class="bg-gray-100 rounded shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold">Issues</h2>
+          <button class="bg-[#2C3E91] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg hover:bg-blue-800">+</button>
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center bg-gray-300 p-4 rounded text-white">
+            <span class="underline">Student Loan Forgiveness</span>
+            <button class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200">View More</button>
+          </div>
+          <div class="flex justify-between items-center bg-gray-300 p-4 rounded text-white">
+            <span class="underline">Climate Change Action</span>
+            <button class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200">View More</button>
+          </div>
+          <div class="flex justify-between items-center bg-gray-300 p-4 rounded text-white">
+            <span class="underline">Gun Control Legislation</span>
+            <button class="bg-white text-black px-3 py-1 rounded hover:bg-gray-200">View More</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#2C3E91] text-white text-center py-3">
+    WhatTheGOV Doin?
+  </footer>
+</body>
+</html>

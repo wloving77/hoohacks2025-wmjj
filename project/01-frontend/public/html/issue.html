@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail | WhatTheGOV Doin?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen font-sans text-gray-800">
+  <!-- Header -->
+  <header class="bg-[#2C3E91] text-white flex items-center px-6 py-4">
+    <img src="./images/favicon.png" alt="Logo" class="h-10 w-10 mr-4" />
+    <h1 class="text-xl font-bold">WhatTheGOV Doin?</h1>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1 px-6 py-10 bg-white max-w-6xl mx-auto">
+    <button onclick="history.back()" class="text-sm text-blue-700 hover:underline mb-6">&larr; Back</button>
+
+    <section class="bg-gray-100 p-8 rounded shadow w-full">
+      <h2 class="text-2xl font-semibold mb-4">Issue Title Here</h2>
+
+      <!-- Overall Summary -->
+      <div class="mb-8">
+        <h3 class="text-xl font-medium text-gray-800 mb-2">Overall Summary</h3>
+        <p class="text-sm text-gray-700 leading-relaxed">LLM-generated summary of all relevant executive orders, bills, and news articles. This should help the user understand the full scope of the issue.</p>
+      </div>
+
+      <!-- News Stories -->
+      <div class="mb-8">
+        <h3 class="text-xl font-medium text-gray-800 mb-2">News Stories</h3>
+        <ul class="list-disc pl-6 text-sm text-gray-700 space-y-1">
+          <li>"College Students Rally Behind Loan Relief Plan" - NYT</li>
+          <li>"Supreme Court Reviews Debt Cancellation Policy" - Reuters</li>
+          <li>"Senate Debates Education Funding Bill" - CNN</li>
+        </ul>
+      </div>
+
+      <!-- Executive Orders and Legislation -->
+      <div>
+        <h3 class="text-xl font-medium text-gray-800 mb-2">Executive Orders & Legislation</h3>
+        <ul class="list-disc pl-6 text-sm text-gray-700 space-y-1">
+          <li>EO 14091 - Further Advancing Racial Equity and Support for Underserved Communities</li>
+          <li>H.R.1234 - Student Debt Relief Act</li>
+          <li>SCOTUS Decision - Biden v. Nebraska</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-[#2C3E91] text-white text-center py-3 mt-10">
+    WhatTheGOV Doin?
+  </footer>
+</body>
+</html>
