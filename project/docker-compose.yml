@@ -9,8 +9,13 @@ services:
     container_name: apache-frontend
     ports:
       - "8080:80"
+    volumes:
+      - ./01-frontend/apache/custom-conf.conf:/etc/apache2/sites-available/000-default.conf
+      - ./01-frontend/public/:/var/www/html/
     networks:
       - app-network
+    dns: 
+      - 8.8.8.8
 
   backend:
     build:

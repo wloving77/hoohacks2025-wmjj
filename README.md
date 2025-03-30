@@ -45,6 +45,13 @@ Repository for our HooHacks Project, Spring 2025
 
 ![DB Image](./Database.png)
 
+
+# API Websites:
+
+- [legislative](api.congress.gov)
+- [judicial](wip)
+- [executive](https://www.whitehouse.gov/presidential-actions/)
+
 # Task Breakup: 
 
 - William : DevOps, Frontend, Infra-Setup

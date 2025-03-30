@@ -1,9 +1,27 @@
-FROM httpd:2.4
+FROM ubuntu:22.04
 
-# Copy site files
-COPY public/ /usr/local/apache2/htdocs/
+# Prevent interactive prompts from delaying install
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy custom Apache config
-COPY apache/custom-conf.conf /usr/local/apache2/conf/conf.d/
+# Install Apache + mod_auth_openidc and dependencies
+RUN apt-get update && \
+    apt-get install -y apache2 libapache2-mod-auth-openidc curl jq && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
+# Enable required Apache modules
+RUN a2enmod auth_openidc rewrite ssl headers
+
+# Copy your custom Apache config
+COPY ./apache/custom-conf.conf /etc/apache2/sites-available/000-default.conf
+
+# Copy static files
+COPY ./public/ /var/www/html/
+
+COPY .env /run/secrets/env
+
+# Expose HTTP port
 EXPOSE 80
+
+# Start Apache in the foreground
+CMD ["/bin/sh", "-c", "set -a && . /run/secrets/env && exec httpd-foreground"]
