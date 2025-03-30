@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col min-h-screen font-sans text-gray-800">
+  
   <!-- Header -->
   <header class="bg-[#001940] flex justify-between items-center px-2 py-2">
     <img src="./images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
@@ -53,7 +54,6 @@
           </button>
         </div>
       </section>
-
     </div>
   </main>
 
@@ -104,9 +104,21 @@
     });
 
     const savedCheckboxStates = new Map();
-
     const modal = document.getElementById('issue-modal');
     const checkboxes = modal.querySelectorAll('input[type=checkbox]');
+    let selectedOrder = [];
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) {
+          // Remove any existing occurrence of the value and push it to the end
+          selectedOrder = selectedOrder.filter(val => val !== cb.value);
+          selectedOrder.push(cb.value);
+        } else {
+          // Remove the value if the checkbox is unchecked
+          selectedOrder = selectedOrder.filter(val => val !== cb.value);
+        }
+      });
+    });
 
     function saveCheckboxStates() {
       checkboxes.forEach(cb => savedCheckboxStates.set(cb.value || cb.nextSibling.textContent.trim(), cb.checked));
@@ -140,16 +152,51 @@
       modal.classList.add('hidden');
     };
     document.getElementById('issue-save').addEventListener('click', () => {
-      const activeIssues = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-      ['Student Loan Forgiveness', 'Climate Change Action', 'Gun Control Legislation'].forEach(issue => {
-        const button = document.getElementById(issue);
-        if (button) {
-          button.style.display = activeIssues.includes(issue) ? 'block' : 'none';
-        }
+      // Get active issues (checkboxes that are checked)
+      const activeIssues = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
+      
+      // Get the container that holds the issue buttons
+      const container = document.querySelector('.space-y-4');
+      
+      // Define the default order of issues
+      const defaultOrder = ['Student Loan Forgiveness', 'Climate Change Action', 'Gun Control Legislation'];
+      
+      // Sort active issues: most recently saved (higher index in selectedOrder) first;
+      // if tie, break by default order (earlier in default order first)
+      activeIssues.sort((a, b) => {
+          const idxA = selectedOrder.indexOf(a);
+          const idxB = selectedOrder.indexOf(b);
+          if (idxA !== idxB) {
+              return idxB - idxA;
+          }
+          return defaultOrder.indexOf(a) - defaultOrder.indexOf(b);
       });
+      
+      // Update the display order: display active issues in sorted order
+      activeIssues.forEach(issue => {
+         const button = document.getElementById(issue);
+         if (button) {
+            button.style.display = 'block';
+            container.appendChild(button);
+         }
+      });
+      
+      // Hide buttons for issues that are not active
+      defaultOrder.forEach(issue => {
+          if (!activeIssues.includes(issue)) {
+              const button = document.getElementById(issue);
+              if (button) {
+                  button.style.display = 'none';
+              }
+          }
+      });
+      
+      // Toggle the visibility of the placeholder message depending on active issues
       const placeholder = document.getElementById('issue-placeholder');
       if (placeholder) {
-        placeholder.classList.toggle('hidden', activeIssues.length > 0);
+          placeholder.classList.toggle('hidden', activeIssues.length > 0);
       }
     });
   </script>
