@@ -12,7 +12,7 @@
 
   <!-- Header -->
   <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
-    <img src="./images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
+    <img src="../images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
     <div class="flex flex-col items-start flex-1 min-w-0">
       <h1 class="w-full text-white text-4xl font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
       <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-12 md:pr-20 lg:pr-36">... and how it affects you</p>
@@ -34,6 +34,17 @@
         </div>
         <p id="bio-feedback" class="mt-3 text-sm text-green-600 hidden">✓ Your biography was submitted successfully.</p>
       </section>
+
+      <script> 
+        document.getElementById("bio-submit").addEventListener("click", () => {
+          const inputText = document.getElementById("bio-input").value;
+          if (inputText == "") {
+            return;
+          }
+          sessionStorage.setItem("user_prompt", inputText);
+          window.location.href = "/html/issue.html";
+        });
+      </script>
 
       <!-- Issues Section -->
       <section class="bg-gray-100 rounded shadow p-6">

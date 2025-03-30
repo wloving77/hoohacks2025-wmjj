@@ -99,3 +99,4 @@ async function fetchBiography(queryText, topK) {
 async function fetchSummary(promptText) {
     return await summarizePoliticalContext(Endpoints[4], promptText);
 }
+
