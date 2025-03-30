@@ -1,7 +1,28 @@
 """
     This is for new executive orders. Just to see what we have not gotten yet in the DB
 """
+import pandas as pd
+import io
 import requests
+import fitz
+import time
+
+# Function to extract text from a PDF given a URL
+def extract_pdf_text_from_url(url):
+    try:
+        # Get the PDF content from the URL
+        response = requests.get(url)
+        response.raise_for_status()  # Ensure the request was successful
+        pdf = io.BytesIO(response.content)
+        
+        # Open the PDF and extract text
+        with fitz.open(stream=pdf) as doc:
+            text = ""
+            for page in doc:
+                text += page.get_text()
+        return text
+    except Exception as e:
+        return f"Error processing URL {url}: {str(e)}"
 
 def get_recent_ten_orders():
     # API endpoint for the Federal Register documents
@@ -23,9 +44,9 @@ def get_recent_ten_orders():
 
     # Check if the request was successful (HTTP status code 200)
     if response.status_code == 200:
-        data = response.json()
-        return data['results']
-       
+        new_orders = pd.DataFrame(response.json()['results'])
+        new_orders['order_text'] = new_orders['pdf_url'].apply(extract_pdf_text_from_url)
+        return new_orders
         
     else:
         print(f"Failed to retrieve data. HTTP Status code: {response.status_code}")
