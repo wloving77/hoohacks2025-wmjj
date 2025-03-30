@@ -24,6 +24,8 @@ services:
     container_name: flask-backend
     ports:
       - "5001:5001"
+    volumes:
+      - ./02-backend/api/:/app
     depends_on:
       - db
     networks:

@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+import csv
 
 load_dotenv("../.env")
 
@@ -143,9 +144,27 @@ def get_mongo_client():
 # ===============================
 
 
-@app.route("/")
+@app.route("/api/issues", methods=["GET"])
 def home():
-    return "Welcome to the WhatTheGOV API!"
+    """Read a CSV file and return the contents as JSON."""
+    csv_file_path = "./issues.csv"  # Replace with your CSV file path
+
+    # Initialize an empty list to store rows as dictionaries
+    csv_data = []
+
+    # Read the CSV file and convert it into a list of dictionaries
+    with open(csv_file_path, mode="r", encoding="utf-8") as file:
+        csv_reader = csv.DictReader(file)  # Automatically uses the first row as keys
+        for row in csv_reader:
+            csv_data.append(
+                {
+                    "issue": row["Issue"],  # Adjust the keys to match your CSV headers
+                    "summary": row["LLM Summary"],
+                }
+            )
+
+    # Return the data as a JSON response
+    return jsonify(csv_data)
 
 
 @app.route("/api/articles", methods=["GET"])
