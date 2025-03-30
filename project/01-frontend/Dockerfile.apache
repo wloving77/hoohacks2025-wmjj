@@ -18,7 +18,7 @@ COPY ./apache/custom-conf.conf /etc/apache2/sites-available/000-default.conf
 # Copy static files
 COPY ./public/ /var/www/html/
 
-COPY ../../.env /run/secrets/env
+COPY .env /run/secrets/env
 
 # Expose HTTP port
 EXPOSE 80
