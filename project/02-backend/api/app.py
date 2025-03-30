@@ -250,21 +250,50 @@ def gemini_summarize():
     pre_prompt = (
         "You are a political assistant. The user has shared a personal or professional concern.\n\n"
         "Use the attached articles and executive orders to explain how recent political developments may affect them. Base your answer only on those documents.\n\n"
-        " The articles will be appended after the user prompt below.\n\n"
-        "Respond using this format:\n\n"
-        "---\n"
-        "**User Summary**\n"
-        "- Role:\n"
-        "- Organization/Industry:\n"
-        "- Key Concerns:\n\n"
-        "**Policy Context**\n"
-        "- Article Insights:\n"
-        "- Executive Order Insights:\n\n"
-        "**Implications**\n"
-        "- [Impact of developments on the user]\n\n"
-        "**Recommendations**\n"
-        "- [What the user should consider or do]\n"
-        "---"
+        "Article Summaries will be appended after the user prompt below.\n\n"
+        "Respond using RAW HTML, not Markdown. Do not wrap your output in backticks or escape characters. Do not include <html>, <head>, or <body> tags.\n\n"
+        'Use semantic HTML elements: <section>, <h2>, <h3>, <ul>, <li>, <p>, <strong>. Apply Tailwind utility classes where helpful for spacing and clarity (e.g., class="mb-4", class="font-semibold", etc.), but use your judgment to adapt the layout to the content.\n\n'
+        "Follow the structure below, but you may adapt or reorganize content sections if needed to best serve the user's question:\n\n"
+        "---\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">User Summary</h2>\n'
+        "  <p><strong>Role:</strong> Insert user role</p>\n"
+        "  <p><strong>Industry:</strong> Insert industry</p>\n"
+        "  <p><strong>Primary Concern:</strong> Insert primary concern</p>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Key Implications</h2>\n'
+        '  <h3 class="text-lg font-medium">How This May Affect the User</h3>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li>Explain a specific impact</li>\n"
+        "    <li>Another important implication</li>\n"
+        "    <li>Optional additional point</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Policy Context</h2>\n'
+        '  <h3 class="text-lg font-medium">Relevant Articles</h3>\n'
+        "  <p><strong>Title 1:</strong> Summary...</p>\n"
+        "  <p><strong>Title 2:</strong> Summary...</p>\n"
+        '  <h3 class="text-lg font-medium mt-4">Relevant Executive Orders</h3>\n'
+        "  <p><strong>EO Title 1:</strong> Summary...</p>\n"
+        "  <p><strong>EO Title 2:</strong> Summary...</p>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Recommendations</h2>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li><strong>Stay Informed:</strong> Describe useful sources or topics to watch</li>\n"
+        "    <li><strong>Consider Actions:</strong> Strategic career or personal steps</li>\n"
+        "    <li><strong>Engage Locally:</strong> Civic/union/community involvement ideas</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Supporting Sources</h2>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li>List article or EO titles if relevant</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        "Write clearly and professionally, adapting your tone to the user's context. Do not mention that you are an AI model."
     )
 
     prompt = data["prompt"]
@@ -274,32 +303,46 @@ def gemini_summarize():
 
     final_prompt = f"{pre_prompt}\n\n{prompt}"
 
-    pre_prompt1 = """ Summarize all of these articles with a single bullet point and 2-3 sentences each. """
-
-    article_prompt = "\n\n**Relevant Articles To This Issue, Produce Recommendations Based On These **\n"
+    article_preprompt = """  Relevant articles to the issue. Please produce a 3-4 sentence summary of the article. \n\n """
+    article_builder = ""
     for article in articles:
-        article_prompt += f"\n\n{article['summary']}"
+        article_builder = f"\n\n{article['summary']}"
+        article["llm_synopses"] = llm_model.generate_content(
+            article_preprompt + article_builder
+        ).text
 
-    pre_prompt2 = """ Summarize all of these executive orders with a single bullet point and 2-3 sentences each. """
+    executive_order_preprompt = """ Relevant executive orders to the issue. Please produce a 3-4 sentence summary of the article. \n\n """
 
-    executive_order_prompt = "\n\n**Relevant Executive Orders To This Issue, Produce Recommendations Based On These **\n"
+    executive_order_builder = ""
     for order in executive_orders:
-        executive_order_prompt += f"\n\n{order['summary']}"
+        executive_order_builder = f"\n\n{order['summary']}"
+        order["llm_synopses"] = llm_model.generate_content(
+            executive_order_preprompt + executive_order_builder
+        ).text
 
-    article_prompt = llm_model.generate_content(pre_prompt1 + article_prompt).text
-    time.sleep(3)  # avoid rate limiting
-    executive_order_prompt = llm_model.generate_content(
-        pre_prompt2 + executive_order_prompt
-    ).text
-    time.sleep(3)  # avoid rate limiting
+    article_final = "\n\n Here are the Articles related to this issue! \n\n"
+    for article in articles:
+        article_final += f"{article['name']}: {article['llm_synopses']}\n\n"
+
+    executive_order_final = (
+        "\n\n Here are the Executive Orders related to this issue! \n\n"
+    )
+    for order in executive_orders:
+        executive_order_final += f"{order['name']}: {order['llm_synopses']}\n\n"
+
+    article_prompt = article_final
+    executive_order_prompt = executive_order_final
 
     final_prompt = f"{final_prompt}\n\n{article_prompt}\n\n{executive_order_prompt}"
 
-    print(f"\n{final_prompt}\n")
-
     try:
-        response = llm_model.generate_content(prompt)
-        return jsonify({"response": response.text})
+        llm_response = llm_model.generate_content(final_prompt).text
+        final_response = {
+            "llm_response": llm_response,
+            "articles": articles,
+            "executive_orders": executive_orders,
+        }
+        return jsonify(final_response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

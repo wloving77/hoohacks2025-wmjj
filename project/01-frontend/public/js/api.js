@@ -70,8 +70,15 @@ async function summarizePoliticalContext(endpoint,promptText) {
         }
 
         const data = await response.json();
-        console.log("LLM Response:", data.response);
-        return data.response;
+        console.log("LLM Response:", data.llm_response);
+
+        const responseDict = {
+            "llm_response": data.llm_response,
+            "articles": data.articles,
+            "executive_orders": data.executive_orders,
+        }
+
+        return responseDict;
 
     } catch (error) {
         console.error("Failed to summarize political context:", error);
