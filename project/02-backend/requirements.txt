@@ -3,3 +3,6 @@ pymongo
 python-dotenv
 google-cloud-aiplatform
 google-genai
+sentence_transformers
+python-dotenv
+numpy

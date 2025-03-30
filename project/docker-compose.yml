@@ -14,8 +14,7 @@ services:
       - ./01-frontend/public/:/var/www/html/
     networks:
       - app-network
-    dns: 
-      - 8.8.8.8
+
 
   backend:
     build:
