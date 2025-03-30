@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-[#002958]">
+<html lang="en" class="bg-[#001940]">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,25 +8,25 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans text-gray-800">
   <!-- Header -->
-  <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
+  <header class="bg-[#001940] flex justify-between items-center px-2 py-2">
     <img src="./images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0" />
     <div class="flex flex-col items-start flex-1 min-w-0">
-      <h1 class="w-full text-white text-[2.5rem] text-semibold font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
+      <h1 class="w-full text-white text-[2.5rem] text-semibold font-serif text-center sm:pr-12 md:pr-20 lg:pr-36" style="font-variant: small-caps;">What the US Government is Doing</h1>
       <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-16 md:pr-24 lg:pr-40">... and how it affects you</p>
     </div>
   </header>
 
   <!-- Main -->
-  <main class="flex-1 px-6 py-10 bg-white w-full">
-    <div class="flex flex-col gap-6">
+  <main class="flex-1 px-4 py-4 bg-gradient-to-b from-white to-[#001940] w-full flex flex-col gap-4">
+    <div class="flex flex-col gap-4">
 
       <!-- Biography Input -->
-      <section class="bg-gray-100 rounded shadow p-6">
+      <section class="bg-gray-100 rounded shadow border border-gray-300 shadow-md w-full p-6">
         <h2 class="text-2xl font-semibold mb-2">Biography</h2>
         <p class="text-sm text-gray-600 mb-4">Enter a short description of yourself and your interests. We'll use it to find political issues most relevant to you.</p>
         <div class="flex flex-col sm:flex-row gap-3">
           <textarea id="bio-input" class="flex-1 h-12 p-3 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="e.g., I'm a college student in Charlottesville who's interested in climate change, economics, and free speech..."></textarea>
-          <button id="bio-submit" class="bg-[#002958] text-white px-4 py-2 rounded hover:bg-blue-800 self-start sm:self-auto whitespace-nowrap">➤ Analyze</button>
+          <button id="bio-submit" class="bg-[#D03F2F]/90 text-white px-4 py-2 rounded hover:bg-blue-800 self-start sm:self-auto whitespace-nowrap">➤ Analyze</button>
         </div>
         <p id="bio-feedback" class="mt-3 text-sm text-green-600 hidden">✓ Your biography was submitted successfully.</p>
       </section>
@@ -35,7 +35,7 @@
       <section class="bg-gray-100 rounded shadow p-6">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-2xl font-semibold">Issues</h2>
-          <button class="bg-[#002958] text-white rounded-full w-8 h-8 flex items-center justify-center text-lg hover:bg-blue-800">+</button>
+          <button onclick="document.getElementById('issue-modal').classList.remove('hidden')" class="bg-[#D03F2F]/90 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg hover:bg-blue-800">+</button>
         </div>
         <div class="space-y-4">
           <button class="w-full text-left bg-gray-300 p-4 rounded hover:bg-gray-400 transition">
@@ -56,11 +56,44 @@
     </div>
   </main>
 
-  <!-- Footer -->
-  <!-- <footer class="bg-[#002958] text-white text-center py-3">
-    WhatTheGOV Doin?
-  </footer> -->
-</script>
+  <!-- Modal Popup -->
+  <div id="issue-modal" onclick="if (event.target === this) { document.querySelectorAll('#issue-modal input[type=checkbox]').forEach(cb => cb.checked = false); this.classList.add('hidden'); }" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded shadow-lg w-full max-w-xl max-h-[80vh] overflow-y-auto">
+      <h2 class="text-xl font-semibold mb-4">Select Issues</h2>
+      <form class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-800">
+        <label><input type="checkbox" class="mr-2" value="Student Loan Forgiveness">Student Loan Forgiveness</label>
+        <label><input type="checkbox" class="mr-2" value="Climate Change">Climate Change</label>
+        <label><input type="checkbox" class="mr-2" value="Gun Control">Gun Control</label>
+        <label><input type="checkbox" class="mr-2" value="Healthcare Reform">Healthcare Reform</label>
+        <label><input type="checkbox" class="mr-2" value="Voting Rights">Voting Rights</label>
+        <label><input type="checkbox" class="mr-2" value="Reproductive Rights">Reproductive Rights</label>
+        <label><input type="checkbox" class="mr-2" value="Education Policy">Education Policy</label>
+        <label><input type="checkbox" class="mr-2" value="LGBTQ+ Rights">LGBTQ+ Rights</label>
+        <label><input type="checkbox" class="mr-2" value="Immigration">Immigration</label>
+        <label><input type="checkbox" class="mr-2" value="Tax Policy">Tax Policy</label>
+        <label><input type="checkbox" class="mr-2" value="Criminal Justice Reform">Criminal Justice Reform</label>
+        <label><input type="checkbox" class="mr-2" value="Military Spending">Military Spending</label>
+        <label><input type="checkbox" class="mr-2" value="Free Speech">Free Speech</label>
+        <label><input type="checkbox" class="mr-2" value="Social Media Regulation">Social Media Regulation</label>
+        <label><input type="checkbox" class="mr-2" value="Police Accountability">Police Accountability</label>
+        <label><input type="checkbox" class="mr-2" value="Housing Affordability">Housing Affordability</label>
+        <label><input type="checkbox" class="mr-2" value="Universal Basic Income">Universal Basic Income</label>
+        <label><input type="checkbox" class="mr-2" value="Surveillance & Privacy">Surveillance & Privacy</label>
+        <label><input type="checkbox" class="mr-2" value="Trade Policy">Trade Policy</label>
+        <label><input type="checkbox" class="mr-2" value="Labor Rights">Labor Rights</label>
+        <label><input type="checkbox" class="mr-2" value="AI Regulation">AI Regulation</label>
+        <label><input type="checkbox" class="mr-2" value="Transportation">Transportation</label>
+        <label><input type="checkbox" class="mr-2" value="Infrastructure">Infrastructure</label>
+        <label><input type="checkbox" class="mr-2" value="Nuclear Policy">Nuclear Policy</label>
+        <label><input type="checkbox" class="mr-2" value="Foreign Aid">Foreign Aid</label>
+      </form>
+      <div class="mt-4 flex justify-end gap-3">
+        <button onclick="document.querySelectorAll('#issue-modal input[type=checkbox]').forEach(cb => cb.checked = false); document.getElementById('issue-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+        <button onclick="document.getElementById('issue-modal').classList.add('hidden')" class="px-4 py-2 bg-[#D03F2F]/90 text-white rounded hover:bg-blue-800">Save</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.getElementById("bio-input").addEventListener("keydown", function (e) {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -68,6 +101,43 @@
         document.getElementById("bio-submit").click();
       }
     });
+
+    const savedCheckboxStates = new Map();
+
+    const modal = document.getElementById('issue-modal');
+    const checkboxes = modal.querySelectorAll('input[type=checkbox]');
+
+    function saveCheckboxStates() {
+      checkboxes.forEach(cb => savedCheckboxStates.set(cb.value || cb.nextSibling.textContent.trim(), cb.checked));
+    }
+
+    function restoreCheckboxStates() {
+      checkboxes.forEach(cb => {
+        const key = cb.value || cb.nextSibling.textContent.trim();
+        if (savedCheckboxStates.has(key)) {
+          cb.checked = savedCheckboxStates.get(key);
+        }
+      });
+    }
+
+    // When opening modal, save current state
+    document.querySelector('[onclick*="issue-modal"]').addEventListener('click', () => {
+      saveCheckboxStates();
+    });
+
+    // On clicking backdrop (outside modal)
+    modal.addEventListener('click', function (e) {
+      if (e.target === this) {
+        restoreCheckboxStates();
+        modal.classList.add('hidden');
+      }
+    });
+
+    // On Cancel button
+    document.querySelector('#issue-modal button.bg-gray-300').onclick = function () {
+      restoreCheckboxStates();
+      modal.classList.add('hidden');
+    };
   </script>
 </body>
 </html>
