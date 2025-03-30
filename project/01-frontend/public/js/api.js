@@ -1,5 +1,3 @@
-
-
 const BASE_API_URL = window.CONFIG?.API_BASE_URL || "http://localhost:5001";
 
 const Endpoints = [
@@ -110,7 +108,7 @@ async function fetchSummary(promptText) {
 
 async function updateIssue(issueId, issueTitle, issueSummary, llmSummary, articles, executive_orders) {
     try {
-      const response = await fetch(ENDPOINTS[2], {
+      const response = await fetch(Endpoints[2], {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
