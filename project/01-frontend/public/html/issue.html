@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white">
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>    
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.3/dist/purify.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Issue Detail | WhatTheGovDoin?</title>
+  </head>
+  <body class="flex flex-col min-h-screen font-sans text-gray-800 bg-white">
+  
+    <!-- Header -->
+    <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
+      <img src="../images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0 rounded-full" />
+      <div class="flex flex-col items-start flex-1 min-w-0">
+        <br>
+        <h1 class="w-full text-white text-4xl font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">
+          What the US Government is Doing
+        </h1>
+        <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-12 md:pr-20 lg:pr-36">
+          ... and how it affects you
+        </p>
+      </div>
+    </header>
+    
+    <!-- Main -->
+    <main class="flex-1 px-6 py-10 w-full">
+      
+      <!-- Loading Screen -->
+      <div id="loading-screen" class="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+        <div class="text-center">
+          <h2 class="text-2xl font-semibold text-[#002958]">Fetching LLM Summary...</h2>
+          <p class="text-gray-600 mt-2">This may take up to 30 seconds.</p>
+        </div>
+        <br>
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-600 mb-4"></div>
+      </div>
+      
+      <!-- Page Content -->
+      <div id="page-content" class="hidden flex flex-col gap-6">
+
+        <!-- LLM Summary -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#002958] px-4 py-2 rounded-t flex justify-between items-center">
+            <h2 class="text-2xl font-semibold text-white">LLM Summary</h2>
+            <button onclick="history.back()" class="bg-white text-[#002958] px-4 py-2 rounded hover:bg-blue-200">
+              Back
+            </button>
+          </div>
+          <div class="p-4 bg-gray-100 rounded-b">
+            <div id="llm-summary" class="prose prose-lg text-gray-800"></div>
+          </div>
+        </section>
+        
+        <!-- News Stories -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#002958] px-4 py-2 rounded-t">
+            <h2 class="text-2xl font-semibold text-white">News Stories</h2>
+          </div>
+          <div class="p-4 bg-gray-100 rounded-b">
+            <ul id="article-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2"></ul>
+          </div>
+        </section>
+        
+        <!-- Executive Orders -->
+        <section class="rounded shadow border border-gray-300">
+          <div class="bg-[#002958] px-4 py-2 rounded-t">
+            <h2 class="text-2xl font-semibold text-white">Executive Orders</h2>
+          </div>
+          <div class="p-4 bg-gray-100 rounded-b">
+            <ul id="executive-orders-list" class="list-disc pl-6 text-sm text-gray-700 space-y-2"></ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+    
+    <script type="module">
+      window.addEventListener("DOMContentLoaded", async () => {
+        let promptText = "";
+        let is_issue = false;
+        let issueId = null;
+        let issueTitle = "";
+        let issueSummary = "";
+        let cleanHTML = "";
+
+        if (sessionStorage.getItem("user_prompt") !== null) {
+          promptText = sessionStorage.getItem("user_prompt");
+        } else {
+          is_issue = true;
+          issueTitle = sessionStorage.getItem("issueTitle");
+          issueId = sessionStorage.getItem("issueId");
+          issueSummary = sessionStorage.getItem("summaryText");
+          promptText = `${issueTitle} - ${issueSummary}`;
+        }
+
+        try {
+          const cachedLLMSummary = sessionStorage.getItem("llm_summary");
+          const cachedArticles = sessionStorage.getItem("articles");
+          const cachedExecutiveOrders = sessionStorage.getItem("executive_orders");
+
+          if (cachedLLMSummary && cachedLLMSummary !== "TBD") {
+            cleanHTML = DOMPurify.sanitize(cachedLLMSummary);
+            document.getElementById("llm-summary").innerHTML = cleanHTML;
+
+            const articles = JSON.parse(cachedArticles || "[]");
+            const executiveOrders = JSON.parse(cachedExecutiveOrders || "[]");
+
+            const articleList = document.getElementById("article-list");
+            articles.forEach((article) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${article.name || "Untitled Article"}</strong>: ${article.llm_synopses}`;
+              articleList.appendChild(li);
+            });
+
+            const eoList = document.getElementById("executive-orders-list");
+            executiveOrders.forEach((order) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${order.name || "Untitled Order"}</strong>: ${order.llm_synopses}`;
+              eoList.appendChild(li);
+            });
+          } else {
+            const data = await fetchSummary(promptText);
+            cleanHTML = DOMPurify.sanitize(data.llm_response);
+            document.getElementById("llm-summary").innerHTML = cleanHTML;
+
+            if (is_issue && issueId) {
+              await updateIssue(issueId, issueTitle, issueSummary, cleanHTML, data.articles, data.executive_orders);
+            }
+
+            const articleList = document.getElementById("article-list");
+            data.articles.forEach((article) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${article.name || "Untitled Article"}</strong>: ${article.llm_synopses}`;
+              articleList.appendChild(li);
+            });
+
+            const eoList = document.getElementById("executive-orders-list");
+            data.executive_orders.forEach((order) => {
+              const li = document.createElement("li");
+              li.innerHTML = `<strong>${order.name || "Untitled Order"}</strong>: ${order.llm_synopses}`;
+              eoList.appendChild(li);
+            });
+          }
+
+          document.getElementById("loading-screen").style.display = "none";
+          document.getElementById("page-content").classList.remove("hidden");
+        } catch (err) {
+          console.error("Failed to summarize political context:", err);
+          document.getElementById("llm-summary").textContent = "An error occurred while loading the summary.";
+          document.getElementById("loading-screen").style.display = "none";
+          document.getElementById("page-content").classList.remove("hidden");
+        }
+
+        sessionStorage.clear();
+      });
+    </script>
+    
+  </body>
+</html>

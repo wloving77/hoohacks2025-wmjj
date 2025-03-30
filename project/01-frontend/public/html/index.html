@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-white">
+<head>
+  <script src="../js/api.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatTheGOV Doin?</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col min-h-screen font-sans text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-[#002958] flex justify-between items-center px-2 py-2">
+    <img src="../images/favicon.png" alt="Logo" class="max-h-24 w-auto shrink-0 rounded-full" />
+    <div class="flex flex-col items-start flex-1 min-w-0">
+      <br>
+      <h1 class="w-full text-white text-4xl font-serif text-center sm:pr-12 md:pr-20 lg:pr-36">What the US Government is Doing</h1>
+      <p class="w-full text-[#D03F2F] text-xl italic font-semibold font-serif text-right sm:pr-12 md:pr-20 lg:pr-36">... and how it affects you</p>
+    </div>
+  </header>
+
+
+  <!-- Main -->
+  <main class="flex-1 px-6 py-10 bg-white w-full">
+    <div class="flex flex-col gap-6">
+
+      <!-- Biography Input -->
+      <section class="bg-gray-100 rounded shadow p-6">
+        <h2 class="text-2xl font-semibold mb-2">Biography</h2>
+        <p class="text-sm text-gray-600 mb-4">Enter a short description of yourself and your interests. We'll use it to find political issues most relevant to you.</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <textarea id="bio-input" class="flex-1 h-12 p-3 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="e.g., I'm a college student in Charlottesville who's interested in climate change, economics, and free speech..."></textarea>
+          <button id="bio-submit" class="bg-[#002958] text-white px-4 py-2 rounded hover:bg-blue-800 self-start sm:self-auto whitespace-nowrap">➤ Analyze</button>
+        </div>
+        <p id="bio-feedback" class="mt-3 text-sm text-green-600 hidden">✓ Your biography was submitted successfully.</p>
+      </section>
+
+      <section class="bg-gray-100 rounded shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-semibold">Issues</h2>
+        </div>
+        <ul id="issue-list" class="space-y-4">
+          <!-- Dynamically rendered issues will go here -->
+        </ul>
+      </section>
+      
+
+    </div>
+  </main>
+
+  <script type="module"> 
+
+    document.getElementById("bio-submit").addEventListener("click", () => {
+      const inputText = document.getElementById("bio-input").value;
+      if (inputText == ""){
+        return; 
+      }
+      sessionStorage.setItem("user_prompt", inputText);
+      window.location.href = "/html/issue.html";
+    });
+
+
+    function makeSafeId(text) {
+      return text.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+    }
+    
+    async function populateIssues() {
+      const issues = await fetchIssues(); // assumes this hits /api/issues
+      const list = document.getElementById('issue-list');
+    
+      list.innerHTML = '';
+    
+      issues.forEach(({ _id, issue, summary, llm_summary, articles, executive_orders }) => {
+        const safeId = makeSafeId(issue);
+        const li = document.createElement('li');
+    
+        li.innerHTML = `
+          <button id="btn-${safeId}" class="w-full text-left bg-gray-300 p-4 rounded hover:bg-gray-400 transition">
+            <h3 class="text-lg font-semibold mb-1">${issue}</h3>
+            <p id="summary-${safeId}" class="text-sm">${summary}</p>
+          </button>
+        `;
+    
+        const button = li.querySelector(`#btn-${safeId}`);
+        button.addEventListener('click', () => {
+          sessionStorage.setItem("issueId", _id); // ✅ save the MongoDB ObjectId
+          sessionStorage.setItem("issueTitle", issue);
+          sessionStorage.setItem("summaryText", summary);
+          sessionStorage.setItem("llm_summary", llm_summary);
+          sessionStorage.setItem("articles", JSON.stringify(articles));
+          sessionStorage.setItem("executive_orders", JSON.stringify(executive_orders));
+
+          window.location.href = "/html/issue.html";
+        });
+    
+        list.appendChild(li);
+      });
+    }
+    
+    
+    
+    document.addEventListener('DOMContentLoaded', populateIssues);
+
+  </script>
+
+</body>
+</html>
