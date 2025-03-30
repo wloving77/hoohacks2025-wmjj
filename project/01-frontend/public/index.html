@@ -8,7 +8,12 @@
 </head>
 <body class="flex flex-col min-h-screen font-sans text-gray-800">
 
-  <script src="js/main.js"></script>
+  <script>
+    window.CONFIG = {
+      API_BASE_URL: "http://localhost:5001",
+    };
+  </script>
+  <script src="js/api.js"></script>
 
   <!-- Header -->
   <header class="bg-[#2C3E91] text-white flex justify-between items-center px-6 py-4">

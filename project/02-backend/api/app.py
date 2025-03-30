@@ -2,6 +2,7 @@ import json
 import os
 import numpy as np
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
@@ -10,6 +11,8 @@ import csv
 load_dotenv(".env")
 
 app = Flask(__name__)
+allowed_origin = os.getenv("FRONTEND_ORIGIN")
+CORS(app, origins=[allowed_origin])
 
 # Initialize the SentenceTransformer model
 model = SentenceTransformer("all-MiniLM-L6-v2")
