@@ -8,7 +8,7 @@ from embedding import (
     get_text_embedding,
 )  # Assuming embedding.py is in the same directory
 
-load_dotenv()
+load_dotenv("../.env")
 
 
 def insert_articles_from_json(json_path):

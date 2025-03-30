@@ -7,7 +7,7 @@ import os
 from embedding import get_text_embedding
 
 
-load_dotenv()
+load_dotenv("../.env")
 
 
 def insert_executive_orders_from_csv(csv_path, chunk_size=1000):
