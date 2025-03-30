@@ -151,6 +151,78 @@ def get_mongo_client():
 # ===============================
 
 
+@app.route("/api/issues", methods=["POST"])
+def replace_existing_issue():
+    """
+    Completely replace an existing issue in the MongoDB 'issues' collection.
+    Expects full document with: _id, issue, summary, llm_summary
+    _id can be any type (string, number, etc.) and will be matched exactly.
+    """
+    data = request.get_json()
+
+    required_fields = [
+        "_id",
+        "issue",
+        "summary",
+        "llm_summary",
+        "articles",
+        "executive_orders",
+    ]
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        client = get_mongo_client()
+        db = client["WhatTheGovDoin"]
+        issue_collection = db["issues"]
+
+        # Full replacement of the document
+        data["_id"] = int(data["_id"])  # 👈 force int type
+        replacement_result = issue_collection.replace_one(
+            {"_id": data["_id"]},  # Match on _id exactly
+            data,  # Replace with full data dict
+            upsert=False,
+        )
+
+        if replacement_result.matched_count == 0:
+            return jsonify({"error": "No issue found with the specified _id"}), 404
+
+        return jsonify({"message": "Issue successfully replaced."}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to replace issue: {str(e)}"}), 500
+
+
+@app.route("/api/issues", methods=["GET"])
+def get_all_issues():
+    """
+    Fetch all issues from the MongoDB 'issues' collection and return them as JSON.
+    Includes: issue_id, issue, summary, llm_summary
+    """
+    client = get_mongo_client()
+    db = client["WhatTheGovDoin"]
+    issue_collection = db["issues"]
+
+    try:
+        issues = list(
+            issue_collection.find(
+                {},
+                {
+                    "_id": 1,
+                    "issue": 1,
+                    "summary": 1,
+                    "llm_summary": 1,
+                    "articles": 1,
+                    "executive_orders": 1,
+                },
+            )
+        )
+        return jsonify(issues), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch issues: {str(e)}"}), 500
+
+
 @app.route("/api/biography", methods=["GET"])
 def fetch_biography():
     """Return a list of the most similar articles based on the query text."""
@@ -168,29 +240,6 @@ def fetch_biography():
     articles_and_executives["executive orders"] = top_executives
 
     return jsonify(articles_and_executives)
-
-
-@app.route("/api/issues", methods=["GET"])
-def home():
-    """Read a CSV file and return the contents as JSON."""
-    csv_file_path = "./issues.csv"  # Replace with your CSV file path
-
-    # Initialize an empty list to store rows as dictionaries
-    csv_data = []
-
-    # Read the CSV file and convert it into a list of dictionaries
-    with open(csv_file_path, mode="r", encoding="utf-8") as file:
-        csv_reader = csv.DictReader(file)  # Automatically uses the first row as keys
-        for row in csv_reader:
-            csv_data.append(
-                {
-                    "issue": row["Issue"],  # Adjust the keys to match your CSV headers
-                    "summary": row["LLM Summary"],
-                }
-            )
-
-    # Return the data as a JSON response
-    return jsonify(csv_data)
 
 
 @app.route("/api/articles", methods=["GET"])
@@ -256,10 +305,8 @@ def gemini_summarize():
         "Follow the structure below, but you may adapt or reorganize content sections if needed to best serve the user's question:\n\n"
         "---\n\n"
         '<section class="mb-6">\n'
-        '  <h2 class="text-xl font-semibold">User Summary</h2>\n'
-        "  <p><strong>Role:</strong> Insert user role</p>\n"
-        "  <p><strong>Industry:</strong> Insert industry</p>\n"
-        "  <p><strong>Primary Concern:</strong> Insert primary concern</p>\n"
+        '  <h2 class="text-xl font-semibold">User or Issue Summary</h2>\n'
+        "  <p>Summary of the user or issue</p>\n"
         "</section>\n\n"
         '<section class="mb-6">\n'
         '  <h2 class="text-xl font-semibold">Key Implications</h2>\n'
@@ -294,12 +341,14 @@ def gemini_summarize():
         "  </ul>\n"
         "</section>\n\n"
         "Write clearly and professionally, adapting your tone to the user's context. Do not mention that you are an AI model."
+        "If it is obviously not a user and simply a political issue, summarize that political issue with respect to the articles and executive orders"
+        "Do not fill null for anything. You are meant to be informative. Thanks!\n\n"
     )
 
     prompt = data["prompt"]
 
-    articles = similarity_search_articles(prompt, top_k=5)
-    executive_orders = similarity_search_executive(prompt, top_k=5)
+    articles = similarity_search_articles(prompt, top_k=10)
+    executive_orders = similarity_search_executive(prompt, top_k=10)
 
     final_prompt = f"{pre_prompt}\n\n{prompt}"
 

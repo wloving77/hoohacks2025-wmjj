@@ -107,3 +107,35 @@ async function fetchSummary(promptText) {
     return await summarizePoliticalContext(Endpoints[4], promptText);
 }
 
+
+async function updateIssue(issueId, issueTitle, issueSummary, llmSummary, articles, executive_orders) {
+    try {
+      const response = await fetch("http://localhost:5001/api/issues", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          _id: issueId,
+          issue: issueTitle,
+          summary: issueSummary,
+          llm_summary: llmSummary,
+          articles: articles,
+          executive_orders: executive_orders
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        console.error("❌ Failed to update issue:", result.error);
+        return false;
+      }
+  
+      console.log("✅ Issue updated successfully.");
+      return true;
+    } catch (error) {
+      console.error("❌ Network error updating issue:", error);
+      return false;
+    }
+  }
