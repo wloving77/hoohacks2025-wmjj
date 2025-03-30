@@ -301,58 +301,165 @@ def gemini_summarize():
     if not data or "prompt" not in data:
         return jsonify({"error": "Missing 'prompt' in request body"}), 400
 
+    pre_prompt = (
+        "You are a political assistant. The user has shared a personal or professional concern.\n\n"
+        "Use the attached articles and executive orders to explain how recent political developments may affect them. Base your answer only on those documents.\n\n"
+        "Article Summaries will be appended after the user prompt below.\n\n"
+        "Respond using RAW HTML, not Markdown. Do not wrap your output in backticks or escape characters. Do not include <html>, <head>, or <body> tags.\n\n"
+        'Use semantic HTML elements: <section>, <h2>, <h3>, <ul>, <li>, <p>, <strong>. Apply Tailwind utility classes where helpful for spacing and clarity (e.g., class="mb-4", class="font-semibold", etc.), but use your judgment to adapt the layout to the content.\n\n'
+        "Follow the structure below, but you may adapt or reorganize content sections if needed to best serve the user's question:\n\n"
+        "---\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">User or Issue Summary</h2>\n'
+        "  <p>Summary of the user or issue</p>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Key Implications</h2>\n'
+        '  <h3 class="text-lg font-medium">How This May Affect the User</h3>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li>Explain a specific impact</li>\n"
+        "    <li>Another important implication</li>\n"
+        "    <li>Optional additional point</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Policy Context</h2>\n'
+        '  <h3 class="text-lg font-medium">Relevant Articles</h3>\n'
+        "  <p><strong>Title 1:</strong> Summary...</p>\n"
+        "  <p><strong>Title 2:</strong> Summary...</p>\n"
+        '  <h3 class="text-lg font-medium mt-4">Relevant Executive Orders</h3>\n'
+        "  <p><strong>EO Title 1:</strong> Summary...</p>\n"
+        "  <p><strong>EO Title 2:</strong> Summary...</p>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Recommendations</h2>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li><strong>Stay Informed:</strong> Describe useful sources or topics to watch</li>\n"
+        "    <li><strong>Consider Actions:</strong> Strategic career or personal steps</li>\n"
+        "    <li><strong>Engage Locally:</strong> Civic/union/community involvement ideas</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        '<section class="mb-6">\n'
+        '  <h2 class="text-xl font-semibold">Supporting Sources</h2>\n'
+        '  <ul class="list-disc pl-6 space-y-2">\n'
+        "    <li>List article or EO titles if relevant</li>\n"
+        "  </ul>\n"
+        "</section>\n\n"
+        "Write clearly and professionally, adapting your tone to the user's context. Do not mention that you are an AI model."
+        "If it is obviously not a user and simply a political issue, summarize that political issue with respect to the articles and executive orders"
+        "Do not fill null for anything. You are meant to be informative. Thanks!\n\n"
+    )
+
+    prompt = data["prompt"]
+
+    articles = similarity_search_articles(prompt, top_k=10)
+    executive_orders = similarity_search_executive(prompt, top_k=10)
+
+    final_prompt = f"{pre_prompt}\n\n{prompt}"
+
+    article_preprompt = """  Relevant articles to the issue. Please produce a 3-4 sentence summary of the article. \n\n """
+    article_builder = ""
+    for article in articles:
+        article_builder = f"\n\n{article['summary']}"
+        article["llm_synopses"] = llm_model.generate_content(
+            article_preprompt + article_builder
+        ).text
+
+    executive_order_preprompt = """ Relevant executive orders to the issue. Please produce a 3-4 sentence summary of the article. \n\n """
+
+    executive_order_builder = ""
+    for order in executive_orders:
+        executive_order_builder = f"\n\n{order['summary']}"
+        order["llm_synopses"] = llm_model.generate_content(
+            executive_order_preprompt + executive_order_builder
+        ).text
+
+    article_final = "\n\n Here are the Articles related to this issue! \n\n"
+    for article in articles:
+        article_final += f"{article['name']}: {article['llm_synopses']}\n\n"
+
+    executive_order_final = (
+        "\n\n Here are the Executive Orders related to this issue! \n\n"
+    )
+    for order in executive_orders:
+        executive_order_final += f"{order['name']}: {order['llm_synopses']}\n\n"
+
+    article_prompt = article_final
+    executive_order_prompt = executive_order_final
+
+    final_prompt = f"{final_prompt}\n\n{article_prompt}\n\n{executive_order_prompt}"
+
     try:
-        # Prep user query
-        prompt = data["prompt"]
-        pre_prompt = (
-            "You are a political assistant. The user has shared a personal or professional concern.\n\n"
-            "Use the attached articles and executive orders to explain how recent political developments may affect them. Base your answer only on those documents.\n\n"
-            "Respond using RAW HTML. Use semantic HTML elements (<section>, <ul>, etc.) and Tailwind CSS utility classes (e.g., mb-4, font-semibold) for layout and emphasis.\n\n"
-            "Do not include <html>, <body>, or Markdown formatting.\n\n"
-        )
-
-        # Step 1: Search for relevant data
-        articles = similarity_search_articles(prompt, top_k=5)
-        executive_orders = similarity_search_executive(prompt, top_k=5)
-
-        # Step 2: Build joined text for context
-        article_summaries = "\n\n".join(
-            [f"{a['name']}:\n{a['summary']}" for a in articles]
-        )
-        executive_summaries = "\n\n".join(
-            [f"{eo['name']}:\n{eo['summary']}" for eo in executive_orders]
-        )
-
-        # Step 3: Combine into one prompt
-        final_prompt = (
-            f"{pre_prompt}"
-            f"\n\nUser Prompt:\n{prompt}"
-            f"\n\nRelevant Articles:\n{article_summaries}"
-            f"\n\nRelevant Executive Orders:\n{executive_summaries}"
-            f"\n\nPlease analyze how these political developments affect the user or issue."
-        )
-
-        # Step 4: Single LLM Call
-        response_text = llm_model.generate_content(final_prompt).text
-
-        # Step 5: Populate `llm_synopses` = `summary`
-        for a in articles:
-            a["llm_synopses"] = a.get("summary", "No summary provided.")
-
-        for eo in executive_orders:
-            eo["llm_synopses"] = eo.get("summary", "No summary provided.")
-
-        # Step 6: Return response
-        return jsonify(
-            {
-                "llm_response": response_text,
-                "articles": articles,
-                "executive_orders": executive_orders,
-            }
-        )
-
+        llm_response = llm_model.generate_content(final_prompt).text
+        final_response = {
+            "llm_response": llm_response,
+            "articles": articles,
+            "executive_orders": executive_orders,
+        }
+        return jsonify(final_response)
     except Exception as e:
-        return jsonify({"error": f"LLM summarization failed: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
+
+
+# @app.route("/api/summarize", methods=["POST"])
+# def gemini_summarize():
+#     """Send a prompt to the Gemini API and return the response."""
+#     data = request.get_json()
+#     if not data or "prompt" not in data:
+#         return jsonify({"error": "Missing 'prompt' in request body"}), 400
+
+#     try:
+#         # Prep user query
+#         prompt = data["prompt"]
+#         pre_prompt = (
+#             "You are a political assistant. The user has shared a personal or professional concern.\n\n"
+#             "Use the attached articles and executive orders to explain how recent political developments may affect them. Base your answer only on those documents.\n\n"
+#             "Respond using RAW HTML. Use semantic HTML elements (<section>, <ul>, etc.) and Tailwind CSS utility classes (e.g., mb-4, font-semibold) for layout and emphasis.\n\n"
+#             "Do not include <html>, <body>, or Markdown formatting.\n\n"
+#         )
+
+#         # Step 1: Search for relevant data
+#         articles = similarity_search_articles(prompt, top_k=5)
+#         executive_orders = similarity_search_executive(prompt, top_k=5)
+
+#         # Step 2: Build joined text for context
+#         article_summaries = "\n\n".join(
+#             [f"{a['name']}:\n{a['summary']}" for a in articles]
+#         )
+#         executive_summaries = "\n\n".join(
+#             [f"{eo['name']}:\n{eo['summary']}" for eo in executive_orders]
+#         )
+
+#         # Step 3: Combine into one prompt
+#         final_prompt = (
+#             f"{pre_prompt}"
+#             f"\n\nUser Prompt:\n{prompt}"
+#             f"\n\nRelevant Articles:\n{article_summaries}"
+#             f"\n\nRelevant Executive Orders:\n{executive_summaries}"
+#             f"\n\nPlease analyze how these political developments affect the user or issue."
+#         )
+
+#         # Step 4: Single LLM Call
+#         response_text = llm_model.generate_content(final_prompt).text
+
+#         # Step 5: Populate `llm_synopses` = `summary`
+#         for a in articles:
+#             a["llm_synopses"] = a.get("summary", "No summary provided.")
+
+#         for eo in executive_orders:
+#             eo["llm_synopses"] = eo.get("summary", "No summary provided.")
+
+#         # Step 6: Return response
+#         return jsonify(
+#             {
+#                 "llm_response": response_text,
+#                 "articles": articles,
+#                 "executive_orders": executive_orders,
+#             }
+#         )
+
+#     except Exception as e:
+#         return jsonify({"error": f"LLM summarization failed: {str(e)}"}), 500
 
 
 # ===============================
