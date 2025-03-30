@@ -110,7 +110,7 @@ async function fetchSummary(promptText) {
 
 async function updateIssue(issueId, issueTitle, issueSummary, llmSummary, articles, executive_orders) {
     try {
-      const response = await fetch(`${BASE_API_URL}:5001/api/issues`, {
+      const response = await fetch(ENDPOINTS[2], {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
