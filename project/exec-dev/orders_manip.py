@@ -28,16 +28,13 @@ def extract_pdf_text_from_url(url):
 
 
 # Apply the function to the DataFrame
-
-first = time.time()
+print("Applying text extraction algorithm to the dataframe")
 orders['order_text'] = orders['pdf_url'].apply(extract_pdf_text_from_url)
-second = time.time()
+print("done with orders")
 
 # Show the resulting DataFrame with extracted text
-print(orders)
 
-print("TOTAL TIME: ", second-first)
-
+orders.to_csv("project/exec-dev/executive_orders.csv", index=False)
 
 # choose model 
 # model = SentenceTransformer('all-MiniLM-L6-v2')  
