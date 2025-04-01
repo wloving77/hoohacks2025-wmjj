@@ -1,44 +1,47 @@
 services:
 
-  frontend:
+  01-frontend:
     build:
       context: ./01-frontend
       dockerfile: Dockerfile.apache
-    container_name: apache-frontend
+      args:
+        ENV: dev
+    container_name: 01-apache-frontend
     ports:
       - "8080:80"
     volumes:
-      - ./01-frontend/apache/custom-conf.conf:/etc/apache2/sites-available/000-default.conf
+      - ./01-frontend/public:/var/www/html
+      - ./01-frontend/apache/base.conf:/etc/apache2/sites-available/000-default.conf
     networks:
       - app-network
 
 
-  backend:
+  02-backend:
     build:
       context: ./02-backend
       dockerfile: Dockerfile.flask
-    container_name: flask-backend
+    container_name: 02-flask-backend
     ports:
       - "5001:5001"
     volumes:
-      - ./02-backend/api/app.py:/app/app.py
+      - ./02-backend/:/backend/
     depends_on:
-      - db
+      - 03-db
     networks:
       - app-network
 
-  db:
+  03-db:
     build:
       context: ./03-db
       dockerfile: Dockerfile.mongo
-    container_name: mongo-db
+    container_name: 03-mongo-db
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
       - ./03-db/mongo-init:/docker-entrypoint-initdb.d:ro
     env_file:
-      - ./03-db/.env
+      - ./03-db/env/dev.env
     networks:
       - app-network
 

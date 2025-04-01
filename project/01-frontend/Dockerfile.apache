@@ -1,26 +1,26 @@
 FROM ubuntu:22.04
 
-# Prevent interactive prompts from delaying install
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install Apache + mod_auth_openidc and dependencies
+# Install Apache and dependencies
 RUN apt-get update && \
     apt-get install -y apache2 libapache2-mod-auth-openidc curl jq libjansson4 libcurl4-openssl-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Enable modules
+RUN a2enmod auth_openidc rewrite ssl headers proxy proxy_http
 
-# Enable required Apache modules
-RUN a2enmod auth_openidc rewrite ssl headers
+# Accept build arg for env selection
+ARG ENV=prod
 
-# Copy your custom Apache config
-COPY ./apache/custom-conf.conf /etc/apache2/sites-available/000-default.conf
+# Copy base config and environment-specific proxy file
+COPY ./apache/base.conf /etc/apache2/sites-available/000-default.conf
+COPY ./apache/proxy.${ENV}.conf /etc/apache2/sites-available/proxy.conf
 
 # Copy static files
-COPY ./public/ /var/www/html/
+#COPY ./public/ /var/www/html/
 
-# Expose HTTP port
 EXPOSE 80
 
-# Start Apache in the foreground
 CMD ["apache2ctl", "-D", "FOREGROUND"]

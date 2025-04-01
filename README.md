@@ -17,33 +17,63 @@ Repository for our HooHacks Project, Spring 2025
 
 
 <pre>
+├── Database.png
 ├── LICENSE
 ├── README.md
 ├── project
 │   ├── 01-frontend
 │   │   ├── Dockerfile.apache
+│   │   ├── README.md
 │   │   ├── apache
 │   │   │   └── custom-conf.conf
 │   │   └── public
+│   │       ├── favicon.ico
 │   │       ├── images
 │   │       │   └── favicon.png
-│   │       └── index.html
+│   │       ├── index.html
+│   │       ├── issue.html
+│   │       └── js
+│   │           ├── api.js
+│   │           └── config.js
 │   ├── 02-backend
 │   │   ├── Dockerfile.flask
+│   │   ├── README.md
 │   │   ├── api
-│   │   │   └── app.py
-│   │   ├── llm
+│   │   │   ├── app.py
+│   │   │   ├── llm.py
+│   │   │   └── sandbox.ipynb
 │   │   └── requirements.txt
 │   ├── 03-db
 │   │   ├── Dockerfile.mongo
-│   │   └── db-init
-│   └── docker-compose.yml
+│   │   ├── README.md
+│   │   ├── data
+│   │   │   ├── executive_orders.csv
+│   │   │   ├── issues.csv
+│   │   │   └── perigon_us_politics_2025.json
+│   │   ├── db_populate
+│   │   │   ├── articles.py
+│   │   │   ├── embedding.py
+│   │   │   ├── executive_orders.py
+│   │   │   ├── issues.py
+│   │   │   └── sandbox.ipynb
+│   │   └── mongo-init
+│   │       └── init_mongo.js
+│   ├── 04-python-scripts
+│   │   ├── exec-dev
+│   │   │   ├── orders_manip.py
+│   │   │   ├── orders_scrape.py
+│   │   │   └── test.py
+│   │   └── news-dev
+│   │       └── get_orders.py
+│   ├── docker-compose.yml
+│   └── project.dbml
 └── sources.txt
+
 </pre>
 
 # Database Design:
 
-![DB Image](./Database.png)
+![DB Image](./project/03-db/Database.png)
 
 
 # API Websites:
@@ -51,10 +81,3 @@ Repository for our HooHacks Project, Spring 2025
 - [legislative](api.congress.gov)
 - [judicial](wip)
 - [executive](https://www.whitehouse.gov/presidential-actions/)
-
-# Task Breakup: 
-
-- William : DevOps, Frontend, Infra-Setup
-- James: API work, LLM Integration
-- Mitch: API Work, Database Population
-- Jackson: ER-Diagram Setup

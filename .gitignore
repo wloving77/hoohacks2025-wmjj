@@ -1,3 +1,7 @@
-hhenv
-.env
+#Python Cache:
 __pycache__
+
+# Environment Files
+dev.env
+prod.env
+.env

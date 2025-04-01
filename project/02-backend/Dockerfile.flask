@@ -2,23 +2,19 @@
 FROM python:3.10-slim
 
 # Set working directory
-WORKDIR /app
+WORKDIR /backend
 
 # Copy entire project into the container
-COPY ./api .
 
-COPY ./.env .env
+COPY requirements.txt requirements.txt
 
-COPY ./requirements.txt requirements.txt
+#COPY . .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt && sleep 5
+RUN pip install --no-cache-dir -r requirements.txt && sleep 2
 
 # Expose Flask port
 EXPOSE 5001
 
-# Set environment variable (optional but recommended)
-ENV FLASK_APP=app.py
-
 # Start the Flask server
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+CMD ["python3", "run.py"]
