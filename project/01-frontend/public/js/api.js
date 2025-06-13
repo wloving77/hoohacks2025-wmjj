@@ -1,4 +1,4 @@
-const BASE_API_URL = window.CONFIG?.API_BASE_URL || "http://localhost:5001";
+const BASE_API_URL = "https://hoohacks2025-wmjj.onrender.com";
 
 const Endpoints = [
     `${BASE_API_URL}/api/articles`,
